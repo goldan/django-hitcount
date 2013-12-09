@@ -92,7 +92,7 @@ class HitCount(models.Model):
         verbose_name_plural = "Hit Counts"
 
     def __unicode__(self):
-        return u'%s' % self.content_object
+        return '%s' % self.content_object
 
     def save(self, *args, **kwargs):
         self.modified = datetime.datetime.utcnow()
@@ -111,8 +111,8 @@ class HitCount(models.Model):
             if HitCount.objects.filter(
                     object_pk=self.object_pk).filter(
                             content_type=self.content_type):
-                raise DuplicateContentObject, "A HitCount object already " + \
-                        "exists for this content_object."
+                raise DuplicateContentObject("A HitCount object already " + \
+                        "exists for this content_object.")
 
         super(HitCount, self).save(*args, **kwargs)
 
@@ -169,7 +169,7 @@ class Hit(models.Model):
         get_latest_by = 'created'
 
     def __unicode__(self):
-        return u'Hit: %s' % self.pk 
+        return 'Hit: %s' % self.pk 
 
     def save(self, *args, **kwargs):
         '''
@@ -209,7 +209,7 @@ class BlacklistIP(models.Model):
         verbose_name_plural = "Blacklisted IPs"
 
     def __unicode__(self):
-        return u'%s' % self.ip
+        return '%s' % self.ip
 
 
 class BlacklistUserAgent(models.Model):
@@ -221,5 +221,5 @@ class BlacklistUserAgent(models.Model):
         verbose_name_plural = "Blacklisted User Agents"
 
     def __unicode__(self):
-        return u'%s' % self.user_agent
+        return '%s' % self.user_agent
 
