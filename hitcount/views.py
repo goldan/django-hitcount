@@ -42,7 +42,7 @@ def _update_hit_count(request, hitcount):
     qs = Hit.objects.filter_active()
 
     # check limit on hits from a unique ip address (HITCOUNT_HITS_PER_IP_LIMIT)
-    if hits_per_ip_limit:
+    if hits_per_ip_limit and not user.is_authenticated():
         if qs.filter(ip__exact=ip).count() > hits_per_ip_limit:
             return False
 
