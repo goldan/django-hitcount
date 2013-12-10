@@ -25,6 +25,7 @@ def _update_hit_count(request, hitcount):
     ip = get_ip(request)
     user_agent = request.META.get('HTTP_USER_AGENT', '')[:255]
     hits_per_ip_limit = getattr(settings, 'HITCOUNT_HITS_PER_IP_LIMIT', 0)
+    hits_per_ip_per_object_limit = getattr(settings, 'HITCOUNT_HITS_PER_IP_PER_OBJECT_LIMIT', 0)
     exclude_user_group = getattr(settings,
                             'HITCOUNT_EXCLUDE_USER_GROUP', None)
 
@@ -42,8 +43,13 @@ def _update_hit_count(request, hitcount):
     qs = Hit.objects.filter_active()
 
     # check limit on hits from a unique ip address (HITCOUNT_HITS_PER_IP_LIMIT)
-    if hits_per_ip_limit and not user.is_authenticated():
+    if hits_per_ip_limit:
         if qs.filter(ip__exact=ip).count() > hits_per_ip_limit:
+            return False
+
+    # check limit on anonymous hits from a unique ip address per hitcount object (HITCOUNT_HITS_PER_IP_PER_OBJECT_LIMIT)
+    if hits_per_ip_per_object_limit and not user.is_authenticated():
+        if qs.filter(ip__exact=ip, hitcount=hitcount).count() >= hits_per_ip_per_object_limit:
             return False
 
     # create a generic Hit object with request data
